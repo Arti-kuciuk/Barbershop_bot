@@ -169,12 +169,13 @@ async def process_date(callback: types.CallbackQuery, state: FSMContext):
     date = datetime.strptime(date_str, "%Y-%m-%d").date()
 
     await state.update_data(date=date, target="date")
-    await callback.message.answer(
-        f"📅 You selected the date: {date.strftime('%d.%m.%Y')}\nIs your date correct?",
+    await callback.message.delete()
+    await callback.message.answer(f"📅 You selected the date: {date.strftime('%d.%m.%Y')}")
+    confirm_msg = await callback.message.answer(
+        "Is your date correct?",
         reply_markup=get_confirmation_keyboard()
     )
     await state.set_state(BookingStates.WAITING_FOR_CONFIRMATION)
-    await callback.message.delete()
 
 # add time validation
 @dp.callback_query(F.data.startswith("time:"))
@@ -183,12 +184,13 @@ async def process_time(callback: types.CallbackQuery, state: FSMContext):
     time = datetime.strptime(time_str, "%H:%M").time()
 
     await state.update_data(time=time, target="time")
-    await callback.message.answer(
-        f"⏰ You selected the time: {time_str}\nIs your time correct?",
+    await callback.message.delete()
+    await callback.message.answer(f"⏰ You selected the time: {time_str}")
+    confirm_msg = await callback.message.answer(
+        "Is your time correct?",
         reply_markup=get_confirmation_keyboard()
     )
     await state.set_state(BookingStates.WAITING_FOR_CONFIRMATION)
-    await callback.message.delete()
 
 # add name validation
 @dp.message(BookingStates.WAITING_FOR_NAME)
