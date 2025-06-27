@@ -169,9 +169,8 @@ async def process_date(callback: types.CallbackQuery, state: FSMContext):
     date = datetime.strptime(date_str, "%Y-%m-%d").date()
 
     await state.update_data(date=date, target="date")
-    await callback.message.answer(f"📅 You selected the date: {date.strftime('%d.%m.%Y')}")
     await callback.message.answer(
-        f"You selected the date: {date.strftime('%d.%m.%Y')}\nIs it correct?",
+        f"📅 You selected the date: {date.strftime('%d.%m.%Y')}\nIs your date correct?",
         reply_markup=get_confirmation_keyboard()
     )
     await state.set_state(BookingStates.WAITING_FOR_CONFIRMATION)
@@ -184,8 +183,10 @@ async def process_time(callback: types.CallbackQuery, state: FSMContext):
     time = datetime.strptime(time_str, "%H:%M").time()
 
     await state.update_data(time=time, target="time")
-    await callback.message.answer(f"⏰ You selected the time: {time_str}")
-    await callback.message.answer(f"You selected the time: {time_str}\nIs it correct?", reply_markup=get_confirmation_keyboard())
+    await callback.message.answer(
+        f"⏰ You selected the time: {time_str}\nIs your time correct?",
+        reply_markup=get_confirmation_keyboard()
+    )
     await state.set_state(BookingStates.WAITING_FOR_CONFIRMATION)
     await callback.message.delete()
 
@@ -457,4 +458,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-    
