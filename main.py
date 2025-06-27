@@ -199,8 +199,8 @@ async def process_name(message: Message, state:FSMContext):
         return
     await message.delete()
     await state.update_data(name=name, target="name")
-    await message.answer(f"👤 Name entered: {name}")
-    await message.answer(
+    await message.answer(f"👤 You selected name: {name}")
+    confirm_msg = await message.answer(
         "Is your name correct?",
         reply_markup=get_confirmation_keyboard()
     )
@@ -215,8 +215,8 @@ async def process_phone(message: Message, state:FSMContext):
         return
     await message.delete()
     await state.update_data(phone=phone, target="phone")
-    await message.answer(f"📞 Phone number entered: {phone}")
-    await message.answer(
+    await message.answer(f"📞 You selected phone number: {phone}")
+    confirm_msg = await message.answer(
         "Is your phone number correct?",
         reply_markup=get_confirmation_keyboard()
     )
