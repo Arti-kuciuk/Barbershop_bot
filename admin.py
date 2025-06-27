@@ -116,6 +116,7 @@ from aiogram.types import CallbackQuery
 
 @router.callback_query(F.data.startswith("cancel_date:"))
 async def show_bookings_for_cancellation(callback: CallbackQuery, state: FSMContext):
+    await callback.message.edit_reply_markup()
     date_str = callback.data.split(":")[1]
     cursor.execute("SELECT * FROM appointments WHERE date = ?", (date_str,))
     results = cursor.fetchall()
@@ -134,6 +135,7 @@ async def show_bookings_for_cancellation(callback: CallbackQuery, state: FSMCont
 
 @router.callback_query(F.data.startswith("admin_cancel:"))
 async def ask_admin_cancel_confirmation(callback: CallbackQuery, state: FSMContext):
+    await callback.message.edit_reply_markup()
     booking_id = callback.data.split(":")[1]
     await state.update_data(cancel_booking_id=booking_id)
 
@@ -147,6 +149,7 @@ async def ask_admin_cancel_confirmation(callback: CallbackQuery, state: FSMConte
 
 @router.callback_query(F.data == "admin_confirm_cancel")
 async def confirm_admin_cancel(callback: CallbackQuery, state: FSMContext):
+    await callback.message.edit_reply_markup()
     data = await state.get_data()
     booking_id = data.get("cancel_booking_id")
 
@@ -163,6 +166,7 @@ async def confirm_admin_cancel(callback: CallbackQuery, state: FSMContext):
 
 @router.callback_query(F.data == "admin_cancel_back")
 async def cancel_back_to_booking(callback: CallbackQuery, state: FSMContext):
+    await callback.message.edit_reply_markup()
     data = await state.get_data()
     booking_id = data.get("cancel_booking_id")
 
