@@ -169,6 +169,7 @@ async def process_date(callback: types.CallbackQuery, state: FSMContext):
     date = datetime.strptime(date_str, "%Y-%m-%d").date()
 
     await state.update_data(date=date, target="date")
+    await callback.message.answer(f"📅 You selected the date: {date.strftime('%d.%m.%Y')}")
     await callback.message.answer(
         f"You selected the date: {date.strftime('%d.%m.%Y')}\nIs it correct?",
         reply_markup=get_confirmation_keyboard()
@@ -183,6 +184,7 @@ async def process_time(callback: types.CallbackQuery, state: FSMContext):
     time = datetime.strptime(time_str, "%H:%M").time()
 
     await state.update_data(time=time, target="time")
+    await callback.message.answer(f"⏰ You selected the time: {time_str}")
     await callback.message.answer(f"You selected the time: {time_str}\nIs it correct?", reply_markup=get_confirmation_keyboard())
     await state.set_state(BookingStates.WAITING_FOR_CONFIRMATION)
     await callback.message.delete()
@@ -196,6 +198,7 @@ async def process_name(message: Message, state:FSMContext):
         return
     await message.delete()
     await state.update_data(name=name, target="name")
+    await message.answer(f"👤 Name entered: {name}")
     await message.answer(
         "Is your name correct?",
         reply_markup=get_confirmation_keyboard()
@@ -211,6 +214,7 @@ async def process_phone(message: Message, state:FSMContext):
         return
     await message.delete()
     await state.update_data(phone=phone, target="phone")
+    await message.answer(f"📞 Phone number entered: {phone}")
     await message.answer(
         "Is your phone number correct?",
         reply_markup=get_confirmation_keyboard()
