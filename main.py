@@ -174,6 +174,7 @@ async def process_date(callback: types.CallbackQuery, state: FSMContext):
         reply_markup=get_confirmation_keyboard()
     )
     await state.set_state(BookingStates.WAITING_FOR_CONFIRMATION)
+    await callback.message.delete()
 
 # add time validation
 @dp.callback_query(F.data.startswith("time:"))
@@ -184,6 +185,7 @@ async def process_time(callback: types.CallbackQuery, state: FSMContext):
     await state.update_data(time=time, target="time")
     await callback.message.answer(f"You selected the time: {time_str}\nIs it correct?", reply_markup=get_confirmation_keyboard())
     await state.set_state(BookingStates.WAITING_FOR_CONFIRMATION)
+    await callback.message.delete()
 
 # add name validation
 @dp.message(BookingStates.WAITING_FOR_NAME)
@@ -192,6 +194,7 @@ async def process_name(message: Message, state:FSMContext):
     if not name.isalpha():
         await message.answer("Name should contain only letters. Please enter a valid name:")
         return
+    await message.delete()
     await state.update_data(name=name, target="name")
     await message.answer(
         "Is your name correct?",
@@ -206,6 +209,7 @@ async def process_phone(message: Message, state:FSMContext):
     if not phone.startswith("+") or not phone[1:].isdigit() or len(phone) != 12:
         await message.answer("Phone number should start with '+' followed by 11 digits. Please enter a valid phone number:")
         return
+    await message.delete()
     await state.update_data(phone=phone, target="phone")
     await message.answer(
         "Is your phone number correct?",
@@ -225,19 +229,23 @@ async def process_date_confirmation(callback: types.CallbackQuery, state: FSMCon
 
     if answer == "yes":
         if target == "date":
+            await callback.message.delete()
             selected_date = data.get("date")  # ← достаём дату из FSM
             await callback.message.answer("Now choose a time:", reply_markup=get_time_keyboard(selected_date))
             await state.set_state(BookingStates.WAITING_FOR_TIME)
             
         elif target == "time":
+            await callback.message.delete()
             await callback.message.answer("Please enter your name:")
             await state.set_state(BookingStates.WAITING_FOR_NAME)
 
         elif target == "name":
+            await callback.message.delete()
             await callback.message.answer("Please enter your phone number, example: +373********")
             await state.set_state(BookingStates.WAITING_FOR_PHONE)
 
         elif target == "phone":
+            await callback.message.delete()
             data = await state.get_data()
             date = data.get("date")
             time = data.get("time")
@@ -269,19 +277,23 @@ async def process_date_confirmation(callback: types.CallbackQuery, state: FSMCon
 
     elif answer == "change":
         if target == "date":
+            await callback.message.delete()
             await callback.message.answer("Please select a date again:", reply_markup=get_date_keyboard())
             await state.set_state(BookingStates.WAITING_FOR_DATE)
 
         elif target == "time":
+            await callback.message.delete()
             selected_date = data.get("date")
             await callback.message.answer("Please choose a time again:", reply_markup=get_time_keyboard(selected_date))
             await state.set_state(BookingStates.WAITING_FOR_TIME)
 
         elif target == "name":
+            await callback.message.delete()
             await callback.message.answer("Please enter your name again:")
             await state.set_state(BookingStates.WAITING_FOR_NAME)
 
         elif target == "phone":
+            await callback.message.delete()
             await callback.message.answer("Please enter your phone number again:")
             await state.set_state(BookingStates.WAITING_FOR_PHONE)
 
