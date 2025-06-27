@@ -92,6 +92,7 @@ async def cancel_booking(message: Message):
 
 @router.callback_query(F.data.startswith("view_date:"))
 async def view_appointments_on_date(callback: CallbackQuery):
+    await callback.message.edit_reply_markup()
     date_str = callback.data.split(":")[1]
     cursor.execute("SELECT * FROM appointments WHERE date = ?", (date_str,))
     results = cursor.fetchall()
